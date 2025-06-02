@@ -2,10 +2,10 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import RecipeCard from "./RecipeCard";
 // Importe as imagens
-import boloCenoura from "../assets/bolo_cenoura.png";
-import paoDeQueijo from "../assets/pao_de_queijo.png";
-import pizza from "../assets/pizza.png";
-import panquecaAveia from "../assets/panqueca_aveia.png";
+import boloCenoura from "/assets/bolo_cenoura.png";
+import paoDeQueijo from "/assets/pao_de_queijo.png";
+import pizza from "/assets/pizza.png";
+import panquecaAveia from "/assets/panqueca_aveia.png";
 
 const ReceitaSection = () => {
   const receitas = [
@@ -46,7 +46,7 @@ const ReceitaSection = () => {
 
   return (
     <div className="pl-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-28">
         <button 
           onClick={handlePrev}
           disabled={startIndex === 0}
