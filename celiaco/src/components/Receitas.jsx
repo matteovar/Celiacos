@@ -3,87 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useReceitas } from "./ReceitasContext";
 import { Link } from "react-router-dom";
 
-const receitasIniciais = {
-  Salgados: [
-    {
-      titulo: "Pão de queijo",
-      slug: "pao-de-queijo",
-      image: "/assets/pao_de_queijo.png",
-      descricao:
-        "Deliciosos pães de queijo tradicionais, crocantes por fora e macios por dentro.",
-    },
-    {
-      titulo: "Panqueca de aveia",
-      slug: "panqueca-de-aveia",
-      image: "/assets/panqueca_aveia.png",
-      descricao:
-        "Panquecas saudáveis feitas com aveia, perfeitas para um café da manhã leve.",
-    },
-    {
-      titulo: "Coxinha",
-      slug: "coxinha",
-      image: "/assets/coxinha.png",
-      descricao:
-        "Coxinhas crocantes por fora e recheadas com frango desfiado, uma delícia sem glúten.",
-    },
-  ],
-  Doces: [
-    {
-      titulo: "Bolo de fubá",
-      slug: "bolo-de-fuba",
-      image:
-        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=400&q=80",
-      descricao:
-        "Bolo de fubá fofinho e sem glúten, perfeito para acompanhar um café.",
-    },
-    {
-      titulo: "Brownie sem glúten",
-      slug: "brownie-sem-gluten",
-      image: "/assets/brownie.png",
-      descricao:
-        "Brownie delicioso, sem glúten, com textura úmida e sabor intenso.",
-    },
-    {
-      titulo: "Bolo de cenoura",
-      slug: "bolo-de-cenoura",
-      image: "/assets/bolo_cenoura.png",
-      descricao:
-        "Bolo de cenoura fofinho com cobertura de chocolate, uma combinação perfeita.",
-    },
-    {
-      titulo: "Bolo de Caneca",
-      slug: "bolo-de-caneca",
-      image: "/assets/bolo_caneca.png",
-      descricao:
-        "Bolo de caneca rápido e fácil, perfeito para uma sobremesa individual.",
-    },
-    {
-      titulo: "Sonho",
-      slug: "sonho",
-      image: "/assets/sonho.png",
-      descricao:
-        "Sonho recheado com creme de baunilha, uma delícia que derrete na boca.",
-    },
-  ],
-  Sobremesas: [
-    {
-      titulo: "Mousse de maracujá",
-      slug: "mousse-maracuja",
-      image:
-        "https://images.unsplash.com/photo-1562440499-7264a3a76b04?auto=format&fit=crop&w=400&q=80",
-      descricao: "Mousse refrescante de maracujá, leve e cremosa.",
-    },
-    {
-      titulo: "Pavê de chocolate",
-      slug: "pave-chocolate",
-      image:
-        "https://images.unsplash.com/photo-1558021212-51b6ecfa0a90?auto=format&fit=crop&w=400&q=80",
-      descricao:
-        "Sobremesa clássica de pavê com camadas de chocolate irresistíveis.",
-    },
-  ],
-};
-
 const categorias = ["Salgados", "Doces", "Sobremesas"];
 
 const Receitas = () => {
@@ -99,11 +18,7 @@ const Receitas = () => {
     fetch("http://localhost:5000/api/receitas")
       .then((res) => res.json())
       .then((data) => {
-        if (!data || data.length === 0) {
-          // Se não vier nada do backend, usa receitasIniciais
-          setReceitas(receitasIniciais);
-          return;
-        }
+
         // Agrupa receitas por categoria
         const agrupadas = { Salgados: [], Doces: [], Sobremesas: [] };
         data.forEach((r) => {
@@ -118,10 +33,7 @@ const Receitas = () => {
         });
         setReceitas(agrupadas);
       })
-      .catch(() => {
-        // Se der erro no fetch, usa receitasIniciais
-        setReceitas(receitasIniciais);
-      });
+      
   }, []);
 
   return (
