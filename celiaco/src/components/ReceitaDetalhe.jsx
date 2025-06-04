@@ -1,48 +1,49 @@
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useReceitas } from "./ReceitasContext";
 
 const receitasDetalhes = {
   "pao-de-queijo": {
-    titulo: "Pão de queijo",
+    titulo: "Pão de Queijo",
     image: "/assets/pao_de_queijo.png",
     descricao:
       "Deliciosos pães de queijo tradicionais, crocantes por fora e macios por dentro.",
     ingredientes: [
       "500 g de polvilho doce",
       "250 ml de leite integral",
-      "1 colher/sopa rasa de sal",
+      "1 colher (sopa) rasa de sal",
       "1 ou 2 ovos",
       "1 prato cheio (350 g) de queijo meia cura e/ou mussarela ralado",
       "1/2 copo de óleo",
     ],
-    utensilhos: ["Assadeira", "Pote", "Panela", "Medidor"],
+    utensilios: ["Assadeira", "Pote", "Panela", "Medidor"],
     preparo: [
       "Preaqueça o forno a 180ºC.",
-      "Aqueça o leite e a manteiga em uma panelina até levantar fervura",
-      "Jogue a mistura fervente no polvilho e mexa para fazer uma pasta",
-      "Junte o queijo ralado e misture. Coloque o ovo e misture novamente. Ajuste o sal",
-      "Modele os pães e coloque os na assadeira",
-      "Deixe no forno ate dourar",
+      "Aqueça o leite e a manteiga em uma panela até levantar fervura.",
+      "Jogue a mistura fervente no polvilho e mexa para fazer uma pasta.",
+      "Junte o queijo ralado e misture. Coloque o ovo e misture novamente. Ajuste o sal.",
+      "Modele os pães e coloque-os na assadeira.",
+      "Deixe no forno até dourar.",
     ],
   },
   "panqueca-de-aveia": {
-    titulo: "Panqueca de aveia",
+    titulo: "Panqueca de Aveia",
     image: "/assets/panqueca_aveia.png",
     descricao:
       "Panquecas saudáveis feitas com aveia, perfeitas para um café da manhã leve.",
     ingredientes: [
       "1 xícara (chá) de leite desnatado",
       "1 colher (café) de salsa desidratada",
-      "2 ovo",
+      "2 ovos",
       "1 xícara (chá) de farinha de aveia",
       "1/2 colher (café) de sal",
     ],
-    utensilhos: ["Liquidificador", "Espátula", "Frigideira untada", "Prato"],
+    utensilios: ["Liquidificador", "Espátula", "Frigideira untada", "Prato"],
     preparo: [
       "Bata todos os ingredientes no liquidificador por 3 minutos.",
-      "Unte uma frigideira com azeite e, em fogo baixo, adicione 1 concha da mistura para panquecas",
-      "Quando estiver dourado em baixo, vire a panqueca para dourar o outro lado.",
-      "Adicione o recheio de sua preferência à panqueca",
+      "Unte uma frigideira com azeite e, em fogo baixo, adicione 1 concha da mistura.",
+      "Quando estiver dourado embaixo, vire a panqueca para dourar o outro lado.",
+      "Adicione o recheio de sua preferência.",
     ],
   },
   coxinha: {
@@ -52,15 +53,15 @@ const receitasDetalhes = {
       "Coxinhas crocantes por fora e recheadas com frango desfiado, uma delícia sem glúten.",
     ingredientes: {
       massa: [
-        "450 g de Farinha de Arroz",
+        "450 g de farinha de arroz",
         "1 litro de caldo de frango",
-        "1 colher (sopa) margarina",
+        "1 colher (sopa) de margarina",
         "Tempero pronto e sal a gosto",
         "½ kg de batata cozida e amassada",
         "Fubá mimoso (isento de glúten)",
       ],
       recheio: [
-        "400 g frango (peito, coxa e sobrecoxa sem pele)",
+        "400 g de frango (peito, coxa e sobrecoxa sem pele)",
         "2 litros de água para cozinhar",
         "Sal a gosto",
         "Óleo a gosto",
@@ -71,25 +72,24 @@ const receitasDetalhes = {
         "1 colher (sopa) de salsa picada",
       ],
     },
-    utensilhos: ["Panela", "Colher de pau", "Prato", "Faca"],
+    utensilios: ["Panela", "Colher de pau", "Prato", "Faca"],
     preparo: {
       recheio: [
-        "Cozinhe o frango na água com sal a gosto. Depois de esfriar, desfie.",
-        "Refogue a cebola, o alho, o tomate e os temperos no óleo. Junte o frango, deixe mais um pouco e desligue.",
-        "Despeje a farinha de arroz aos poucos, mexendo sempre até formar uma massa homogênea.",
+        "Cozinhe o frango na água com sal. Depois de esfriar, desfie.",
+        "Refogue a cebola, o alho, o tomate e os temperos no óleo. Junte o frango, misture bem e desligue.",
       ],
       massa: [
-        "Ferva o caldo de frango com a margarina, o tempero pronto, o sal e a batata",
-        "Acrescente a farinha de arroz aos poucos, mexendo até desgrudar da panela",
+        "Ferva o caldo de frango com a margarina, o tempero pronto, o sal e a batata.",
+        "Acrescente a farinha de arroz aos poucos, mexendo até desgrudar da panela.",
         "Deixe esfriar em uma vasilha e sove.",
         "Abra a massa na mão em pequenos círculos.",
-        "Recheie e modele as coxinhas",
-        "Depois, molhe levemente em água, passe no fubá e frite em óleo bem quente, deixando-as douradas.",
+        "Recheie e modele as coxinhas.",
+        "Molhe levemente em água, passe no fubá e frite em óleo bem quente até dourar.",
       ],
     },
   },
   "bolo-de-fuba": {
-    titulo: "Bolo de fubá",
+    titulo: "Bolo de Fubá",
     image:
       "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=400&q=80",
     descricao:
@@ -102,7 +102,7 @@ const receitasDetalhes = {
       "1 xícara (chá) de leite",
       "1 colher (sopa) de fermento em pó",
     ],
-    utensilhos: ["Batedeira", "Assadeira", "Espátula", "Peneira"],
+    utensilios: ["Batedeira", "Assadeira", "Espátula", "Peneira"],
     preparo: [
       "Preaqueça o forno a 180ºC.",
       "Bata os ovos, o açúcar e o óleo na batedeira até obter um creme claro.",
@@ -111,55 +111,52 @@ const receitasDetalhes = {
     ],
   },
   "brownie-sem-gluten": {
-    titulo: "Brownie sem glúten",
+    titulo: "Brownie sem Glúten",
     image: "/assets/brownie.png",
     descricao:
       "Brownie delicioso, sem glúten, com textura úmida e sabor intenso.",
     ingredientes: [
-      "200g de manteiga",
-      "200g de chocolate 70% cacau",
+      "200 g de manteiga",
+      "200 g de chocolate 70% cacau",
       "1 xícara de gotas de chocolate",
       "3 ovos inteiros",
       "1 xícara de açúcar",
       "2/3 de xícara de farinha de arroz",
       "1/2 colher de chá de sal",
     ],
-    utensilhos: ["Tigela", "Panela", "Espátula", "Assadeira", "Papel manteiga"],
+    utensilios: ["Tigela", "Panela", "Espátula", "Assadeira", "Papel manteiga"],
     preparo: [
-      "Pré-aqueça o forno a 180 graus.",
+      "Preaqueça o forno a 180ºC.",
       "Unte e enfarinhe a assadeira com manteiga e farinha de arroz.",
-      "Derreta o chocolate 70%.",
-      "Acrescente a manteiga ao chocolate derretido e mexa bem.",
-      "Acrescente a farinha de arroz e misture bem.",
-      "Acrescente o açúcar e misture bem.",
-      "Acrescente os ovos e misture bem.",
-      "Despeje a massa na forma untada e enfarinhada e leve ao forno por 20 minutos.",
-      "Espere esfriar para desenformar e partir.",
+      "Derreta o chocolate 70% e misture a manteiga.",
+      "Acrescente a farinha, depois o açúcar, e por fim os ovos, misturando bem a cada etapa.",
+      "Despeje a massa na forma preparada e leve ao forno por 20 minutos.",
+      "Espere esfriar antes de desenformar e servir.",
     ],
   },
   "bolo-de-cenoura": {
-    titulo: "Bolo de cenoura",
+    titulo: "Bolo de Cenoura",
     image: "/assets/bolo_cenoura.png",
     descricao:
       "Bolo de cenoura fofinho com cobertura de chocolate, uma combinação perfeita.",
     ingredientes: [
-      "2 xícaras farinha de arroz",
-      "2 xícaras açúcar",
+      "2 xícaras de farinha de arroz",
+      "2 xícaras de açúcar",
       "1 xícara de óleo",
       "3 ovos",
-      "3 cenouras médias e picadas ou raladas",
-      "1 colher de sopa fermento em pó sem glúten",
-      "2 colheres de sopa óleo para untar",
-      "2 colheres de sopa farinha de arroz para enfarinhar",
+      "3 cenouras médias picadas ou raladas",
+      "1 colher (sopa) de fermento em pó sem glúten",
+      "2 colheres (sopa) de óleo para untar",
+      "2 colheres (sopa) de farinha de arroz para enfarinhar",
     ],
-    utensilhos: ["Liquidificador", "Tigela", "Forma"],
+    utensilios: ["Liquidificador", "Tigela", "Forma"],
     preparo: [
       "Preaqueça o forno a 180ºC.",
-      "Junte o óleo, o açúcar, as cenouras picadas ou raladas no liquidificador e bata bem.",
-      "Coloque a farinha de arroz em uma tigela e misture a pitada de sal.",
-      "Despeje a mistura do liquidificador por cima e misture com uma colher até ficar homogêneo e misture com o fermento.",
-      "Espalhe bem as duas colheres de sopa de óleo na forma para untar e enfarinhe com as duas colheres de sopa de farinha de arroz.",
-      "Despeje a massa na forma e leve ao forno para assar por 30 minutos.",
+      "No liquidificador, bata o óleo, o açúcar e as cenouras até obter um creme.",
+      "Em uma tigela, misture a farinha com o fermento.",
+      "Adicione o conteúdo do liquidificador à tigela e misture bem.",
+      "Unte e enfarinhe a forma com óleo e farinha de arroz.",
+      "Despeje a massa na forma e asse por 30 minutos.",
     ],
   },
   "bolo-de-caneca": {
@@ -176,12 +173,12 @@ const receitasDetalhes = {
       "2 colheres (sopa) de chocolate em pó",
       "1 colher (café) de fermento em pó",
     ],
-    utensilhos: ["Caneca", "Colher", "Micro-ondas"],
+    utensilios: ["Caneca", "Colher", "Micro-ondas"],
     preparo: [
-      "Quebre o ovo, coloque na caneca e vá batendo com o garfo.",
-      "Adicione o óleo, o açúcar, o leite e o chocolate e bata mais um pouco.",
-      "Acrescente a farinha de arroz, o fermento e mexa até ficar homogêneo.",
-      "Leve ao micro-ondas por cerca de três minutos.",
+      "Coloque o ovo na caneca e bata com um garfo.",
+      "Adicione o óleo, o açúcar, o leite e o chocolate, misturando bem.",
+      "Acrescente a farinha de arroz e o fermento, mexendo até a massa ficar homogênea.",
+      "Leve ao micro-ondas por cerca de 3 minutos.",
       "Deixe esfriar um pouco antes de servir.",
     ],
   },
@@ -262,147 +259,147 @@ const receitasDetalhes = {
 const ReceitaDetalhe = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { receitas } = useReceitas();
+
   const [receita, setReceita] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/receitas")
-      .then((res) => res.json())
-      .then((data) => {
-        const encontrada = data.find((r) => r.slug === slug);
-        if (encontrada) {
-          setReceita(encontrada);
-        } else if (receitasDetalhes[slug]) {
-          setReceita(receitasDetalhes[slug]);
-        } else {
-          setReceita(null);
-        }
-      });
-  }, [slug]);
+    // Procura nas receitas do contexto
+    let encontrada = receitas.find((r) => r.slug === slug);
 
-  if (!receita)
-    return <div className="p-4 text-red-600">Receita não encontrada!</div>;
+    if (encontrada) {
+      setReceita(encontrada);
+    } else if (receitasDetalhes[slug]) {
+      // Procura nas receitas fixas
+      setReceita(receitasDetalhes[slug]);
+    } else {
+      // Busca do backend
+      fetch(`http://localhost:5000/api/receitas/${slug}`)
+        .then((res) => res.json())
+        .then((data) => setReceita(data))
+        .catch(() => setReceita({ error: true }));
+    }
+  }, [slug, receitas]);
+
+  if (!receita) return <div>Carregando...</div>;
+  if (receita.error) return <div>Receita não encontrada!</div>;
+
+  // Corrige utensilios/utensilhos
+  const utensilios = receita.utensilios || receita.utensilhos || [];
+
+  const renderIngredientes = () => {
+    if (Array.isArray(receita.ingredientes)) {
+      return (
+        <ul className="list-disc pl-6 mb-4 grid grid-cols-1 md:grid-cols-2 gap-5">
+          {receita.ingredientes.map((item, idx) => (
+            <li key={idx} className="break-words">
+              {item}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    // Massa e recheio
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {Object.entries(receita.ingredientes).map(([tipo, lista]) => (
+          <div key={tipo}>
+            <h4 className="font-semibold capitalize mb-1">{tipo}</h4>
+            <ul className="list-disc pl-6 mb-4">
+              {lista.map((item, idx) => (
+                <li key={idx} className="break-words">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Preparo pode ser array ou objeto (massa/recheio)
+  const renderUtensilios = () => {
+    if (!receita.utensilios || receita.utensilios.length === 0) return null;
+    return (
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-2">Utensílios:</h3>
+        <ul className="list-disc pl-6 mb-4 grid grid-cols-2 gap-2">
+          {receita.utensilios.map((item, idx) => (
+            <li key={idx}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  // Preparo pode ser array ou objeto (massa/recheio)
+  const renderPreparo = () => {
+    if (Array.isArray(receita.preparo)) {
+      return (
+        <ol className="list-decimal list-inside space-y-3 text-gray-700">
+          {receita.preparo.map((passo, index) => (
+            <li
+              key={index}
+              className="border bg-white p-3 rounded-md overflow-hidden shadow-lg hover:shadow-2xl transition"
+            >
+              {passo}
+            </li>
+          ))}
+        </ol>
+      );
+    }
+    // Massa e recheio
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {Object.entries(receita.preparo).map(([tipo, lista]) => (
+          <div key={tipo}>
+            <h4 className="font-semibold capitalize mb-1">{tipo}</h4>
+            <ol className="list-decimal list-inside space-y-3 text-gray-700">
+              {lista.map((passo, idx) => (
+                <li
+                  key={idx}
+                  className="border bg-white p-3 rounded-md overflow-hidden shadow-lg hover:shadow-2xl transition"
+                >
+                  {passo}
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg mt-6">
+    <div className="p-6 max-w-4xl w-full mx-auto bg-white rounded-lg mt-6 ">
       <button
-        className="mb-4 px-4 py-2 bg-gradient-to-r from-red-400 via-red-500 to-red-700 text-white font-semibold rounded-full shadow-lg transition hover:brightness-110 hover:scale-105 duration-200"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/receitas")}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
       >
-        ← Voltar
+        ← Voltar para receitas
       </button>
-      <h1 className="text-2xl font-bold mb-2">{receita.titulo}</h1>
-      {receita.image && (
-        <img
-          src={receita.image}
-          alt={receita.titulo}
-          className="w-full h-64 object-cover rounded mb-4"
-        />
-      )}
-      <p className="mb-4">{receita.descricao}</p>
-      <h2 className="text-lg font-semibold mt-4 mb-2">Ingredientes</h2>
-      <ul className="list-disc pl-6 mb-4">
-        {Array.isArray(receita.ingredientes) ? (
-          receita.ingredientes.map((item, idx) => <li key={idx}>{item}</li>)
-        ) : (
-          <>
-            {receita.ingredientes.massa && (
-              <>
-                <li className="font-semibold">Massa:</li>
-                {receita.ingredientes.massa.map((item, idx) => (
-                  <li key={"massa" + idx} className="ml-4">
-                    {item}
-                  </li>
-                ))}
-              </>
-            )}
-            {receita.ingredientes.recheio && (
-              <>
-                <li className="font-semibold">Recheio:</li>
-                {receita.ingredientes.recheio.map((item, idx) => (
-                  <li key={"recheio" + idx} className="ml-4">
-                    {item}
-                  </li>
-                ))}
-              </>
-            )}
-            {receita.ingredientes.gerais && (
-              <>
-                {receita.ingredientes.gerais.map((item, idx) => (
-                  <li key={"geral" + idx}>{item}</li>
-                ))}
-              </>
-            )}
-          </>
-        )}
-      </ul>
-      <h2 className="text-lg font-semibold mt-4 mb-2">Utensílios</h2>
-      <ul className="list-disc pl-6 mb-4">
-        {(receita.utensilhos || receita.utensilios || []).map((item, idx) => (
-          <li key={idx}>{item}</li>
-        ))}
-      </ul>
-      <h2 className="text-lg font-semibold mt-4 mb-2">Modo de Preparo</h2>
-      <ol className="list-decimal pl-6">
-        {Array.isArray(receita.preparo) ? (
-          receita.preparo.map((item, idx) => (
-            <div
-              key={idx}
-              className="shadow-md bg-white rounded p-2 mb-2 flex items-start gap-2"
-            >
-              <span className="font-bold">{idx + 1}.</span>
-              <span>{item}</span>
-            </div>
-          ))
-        ) : (
-          <>
-            {receita.preparo.massa && (
-              <>
-                <div className="shadow-md bg-white rounded p-2 mb-2">
-                  <span className="font-semibold">Massa:</span>
-                </div>
-                {receita.preparo.massa.map((item, idx) => (
-                  <div
-                    key={"pmassa" + idx}
-                    className="shadow-md bg-white rounded p-2 mb-2 ml-4 flex items-start gap-2"
-                  >
-                    <span className="font-bold">{idx + 1}.</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </>
-            )}
-            {receita.preparo.recheio && (
-              <>
-                <div className="shadow-md bg-white rounded p-2 mb-2">
-                  <span className="font-semibold">Recheio:</span>
-                </div>
-                {receita.preparo.recheio.map((item, idx) => (
-                  <div
-                    key={"precheio" + idx}
-                    className="shadow-md bg-white rounded p-2 mb-2 ml-4 flex items-start gap-2"
-                  >
-                    <span className="font-bold">{idx + 1}.</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </>
-            )}
-            {receita.preparo.geral && (
-              <>
-                {receita.preparo.geral.map((item, idx) => (
-                  <div
-                    key={"pgeral" + idx}
-                    className="shadow-md bg-white rounded p-2 mb-2 flex items-start gap-2"
-                  >
-                    <span className="font-bold">{idx + 1}.</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </>
-            )}
-          </>
-        )}
-      </ol>
+      <h2 className="text-3xl font-bold mb-4">
+        {receita.nome || receita.titulo}
+      </h2>
+      <img
+        src={receita.image}
+        alt={`Imagem de ${receita.nome || receita.titulo}`}
+        className="mx-auto rounded-lg object-cover mb-8"
+        style={{ width: "782px", height: "458px" }}
+      />
+
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-2">Ingredientes:</h3>
+        {renderIngredientes()}
+      </div>
+
+      {renderUtensilios()}
+
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-2">Modo de preparo:</h3>
+        {renderPreparo()}
+      </div>
     </div>
   );
 };

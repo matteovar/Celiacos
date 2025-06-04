@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useReceitas } from "./ReceitasContext";
 import { Link } from "react-router-dom";
 
 const receitasIniciais = {
@@ -82,559 +84,59 @@ const receitasIniciais = {
   ],
 };
 
-function slugify(text) {
-  return text
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "")
-    .replace(/\-\-+/g, "-")
-    .replace(/^-+/, "")
-    .replace(/-+$/, "");
-}
-
 const categorias = ["Salgados", "Doces", "Sobremesas"];
 
 const Receitas = () => {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Salgados");
-  const [showModal, setShowModal] = useState(false);
-  const [receitas, setReceitas] = useState(receitasIniciais);
+  const [receitas, setReceitas] = useState({
+    Salgados: [],
+    Doces: [],
+    Sobremesas: [],
+  });
+  const navigate = useNavigate();
 
-  // Campos do formulário
-  const [titulo, setTitulo] = useState("");
-  const [categoria, setCategoria] = useState("Salgados");
-  const [image, setImage] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [temMassaRecheio, setTemMassaRecheio] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState(null);
-
-  // Ingredientes e preparo
-  const [ingredientesMassa, setIngredientesMassa] = useState([""]);
-  const [ingredientesRecheio, setIngredientesRecheio] = useState([""]);
-  const [ingredientesGerais, setIngredientesGerais] = useState([""]);
-  const [utensilhos, setUtensilhos] = useState([""]);
-  const [preparoMassa, setPreparoMassa] = useState([""]);
-  const [preparoRecheio, setPreparoRecheio] = useState([""]);
-  const [preparoGeral, setPreparoGeral] = useState([""]);
-
-  // Carrega receitas do backend ao iniciar
   useEffect(() => {
-    fetch("http://localhost:3001/receitas")
+    fetch("http://localhost:5000/api/receitas")
       .then((res) => res.json())
       .then((data) => {
-        const novasReceitas = { ...receitasIniciais };
+        if (!data || data.length === 0) {
+          // Se não vier nada do backend, usa receitasIniciais
+          setReceitas(receitasIniciais);
+          return;
+        }
+        // Agrupa receitas por categoria
+        const agrupadas = { Salgados: [], Doces: [], Sobremesas: [] };
         data.forEach((r) => {
-          if (!novasReceitas[r.categoria]) novasReceitas[r.categoria] = [];
-          // Só adiciona se não existir slug igual
-          if (
-            !novasReceitas[r.categoria].some((item) => item.slug === r.slug)
-          ) {
-            novasReceitas[r.categoria].push(r);
-          }
+          const cat = r.categoria || "Salgados";
+          agrupadas[cat] = agrupadas[cat] || [];
+          agrupadas[cat].unshift({
+            titulo: r.nome || r.titulo,
+            slug: r.slug,
+            image: r.image,
+            descricao: r.descricao,
+          });
         });
-        setReceitas(novasReceitas);
+        setReceitas(agrupadas);
+      })
+      .catch(() => {
+        // Se der erro no fetch, usa receitasIniciais
+        setReceitas(receitasIniciais);
       });
   }, []);
 
-  // Helpers para campos dinâmicos
-  const handleArrayChange = (setter, arr, idx, value) => {
-    const novo = [...arr];
-    novo[idx] = value;
-    setter(novo);
-  };
-  const handleAddField = (setter, arr) => setter([...arr, ""]);
-  const handleRemoveField = (setter, arr, idx) => {
-    if (arr.length === 1) return;
-    setter(arr.filter((_, i) => i !== idx));
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setUploadedImage(ev.target.result);
-        setImage(""); // Limpa o campo de URL se o usuário fizer upload
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Envio do formulário
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const novaReceita = {
-      titulo,
-      slug: slugify(titulo),
-      image: uploadedImage || image || "/assets/receita_default.png", // Prioriza imagem enviada
-      descricao,
-      categoria,
-      ingredientes: temMassaRecheio
-        ? {
-            massa: ingredientesMassa.filter((i) => i.trim()),
-            recheio: ingredientesRecheio.filter((i) => i.trim()),
-          }
-        : ingredientesGerais.filter((i) => i.trim()),
-      utensilhos: utensilhos.filter((u) => u.trim()),
-      preparo: temMassaRecheio
-        ? {
-            massa: preparoMassa.filter((p) => p.trim()),
-            recheio: preparoRecheio.filter((p) => p.trim()),
-          }
-        : preparoGeral.filter((p) => p.trim()),
-    };
-
-    // Salva no backend
-    await fetch("http://localhost:3001/receitas", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(novaReceita),
-    });
-
-    setReceitas((prev) => ({
-      ...prev,
-      [categoria]: [...(prev[categoria] || []), novaReceita],
-    }));
-
-    setShowModal(false);
-    setTitulo("");
-    setImage("");
-    setDescricao("");
-    setTemMassaRecheio(false);
-    setIngredientesMassa([""]);
-    setIngredientesRecheio([""]);
-    setIngredientesGerais([""]);
-    setUtensilhos([""]);
-    setPreparoMassa([""]);
-    setPreparoRecheio([""]);
-    setPreparoGeral([""]);
-
-    setUploadedImage(null); // Limpa imagem enviada após salvar
-  };
-
   return (
     <div className="p-6 max-w-4xl w-full mx-auto bg-white rounded-lg mt-6">
-      <button
-        onClick={() => setShowModal(true)}
-        className="fixed bottom-8 right-8 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-700 z-50"
-      >
-        Colocar minhas receitas
-      </button>
-
-      {/* Modal de cadastro */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-lg relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500"
-              onClick={() => setShowModal(false)}
-            >
-              ✕
-            </button>
-            <h2 className="text-xl font-bold mb-4">Cadastrar Receita</h2>
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-3 max-h-[80vh] overflow-y-auto"
-            >
-              <input
-                type="text"
-                placeholder="Nome da receita"
-                value={titulo}
-                onChange={(e) => setTitulo(e.target.value)}
-                className="border p-2 w-full"
-                required
-              />
-              <input
-                type="text"
-                placeholder="URL da foto (opcional)"
-                value={image}
-                onChange={(e) => {
-                  setImage(e.target.value);
-                  setUploadedImage(null); // Limpa upload se digitar URL
-                }}
-                className="border p-2 w-full"
-              />
-              {/* Campo para upload de imagem */}
-              <div>
-                <label className="block mb-1">Ou envie uma foto:</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="border p-2 w-full"
-                />
-              </div>
-              {/* Preview da imagem escolhida */}
-              {(uploadedImage || image) && (
-                <div className="mb-2">
-                  <img
-                    src={uploadedImage || image}
-                    alt="Pré-visualização"
-                    className="w-full h-40 object-cover rounded border"
-                  />
-                </div>
-              )}
-              <textarea
-                placeholder="Descrição"
-                value={descricao}
-                onChange={(e) => setDescricao(e.target.value)}
-                className="border p-2 w-full"
-                required
-              />
-              <div>
-                <label className="block mb-1">Categoria:</label>
-                <select
-                  value={categoria}
-                  onChange={(e) => setCategoria(e.target.value)}
-                  className="border p-2 w-full"
-                >
-                  {categorias.map((cat) => (
-                    <option key={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={temMassaRecheio}
-                    onChange={(e) => setTemMassaRecheio(e.target.checked)}
-                  />
-                  Tem massa e recheio?
-                </label>
-              </div>
-              {/* Ingredientes */}
-              {temMassaRecheio ? (
-                <>
-                  <div>
-                    <label>Ingredientes da Massa:</label>
-                    {ingredientesMassa.map((ing, idx) => (
-                      <div key={idx} className="flex gap-2 mb-1">
-                        <input
-                          type="text"
-                          value={ing}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              setIngredientesMassa,
-                              ingredientesMassa,
-                              idx,
-                              e.target.value
-                            )
-                          }
-                          className="border p-2 flex-1"
-                          required={idx === 0}
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleRemoveField(
-                              setIngredientesMassa,
-                              ingredientesMassa,
-                              idx
-                            )
-                          }
-                        >
-                          -
-                        </button>
-                        {idx === ingredientesMassa.length - 1 && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleAddField(
-                                setIngredientesMassa,
-                                ingredientesMassa
-                              )
-                            }
-                          >
-                            +
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <label>Ingredientes do Recheio:</label>
-                    {ingredientesRecheio.map((ing, idx) => (
-                      <div key={idx} className="flex gap-2 mb-1">
-                        <input
-                          type="text"
-                          value={ing}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              setIngredientesRecheio,
-                              ingredientesRecheio,
-                              idx,
-                              e.target.value
-                            )
-                          }
-                          className="border p-2 flex-1"
-                          required={idx === 0}
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleRemoveField(
-                              setIngredientesRecheio,
-                              ingredientesRecheio,
-                              idx
-                            )
-                          }
-                        >
-                          -
-                        </button>
-                        {idx === ingredientesRecheio.length - 1 && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleAddField(
-                                setIngredientesRecheio,
-                                ingredientesRecheio
-                              )
-                            }
-                          >
-                            +
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <label>Ingredientes:</label>
-                  {ingredientesGerais.map((ing, idx) => (
-                    <div key={idx} className="flex gap-2 mb-1">
-                      <input
-                        type="text"
-                        value={ing}
-                        onChange={(e) =>
-                          handleArrayChange(
-                            setIngredientesGerais,
-                            ingredientesGerais,
-                            idx,
-                            e.target.value
-                          )
-                        }
-                        className="border p-2 flex-1"
-                        required={idx === 0}
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleRemoveField(
-                            setIngredientesGerais,
-                            ingredientesGerais,
-                            idx
-                          )
-                        }
-                      >
-                        -
-                      </button>
-                      {idx === ingredientesGerais.length - 1 && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleAddField(
-                              setIngredientesGerais,
-                              ingredientesGerais
-                            )
-                          }
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* Utensílios */}
-              <div>
-                <label>Utensílios:</label>
-                {utensilhos.map((ut, idx) => (
-                  <div key={idx} className="flex gap-2 mb-1">
-                    <input
-                      type="text"
-                      value={ut}
-                      onChange={(e) =>
-                        handleArrayChange(
-                          setUtensilhos,
-                          utensilhos,
-                          idx,
-                          e.target.value
-                        )
-                      }
-                      className="border p-2 flex-1"
-                      required={idx === 0}
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleRemoveField(setUtensilhos, utensilhos, idx)
-                      }
-                    >
-                      -
-                    </button>
-                    {idx === utensilhos.length - 1 && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleAddField(setUtensilhos, utensilhos)
-                        }
-                      >
-                        +
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              {/* Modo de preparo */}
-              {temMassaRecheio ? (
-                <>
-                  <div>
-                    <label>Modo de Preparo da Massa:</label>
-                    {preparoMassa.map((prep, idx) => (
-                      <div key={idx} className="flex gap-2 mb-1">
-                        <input
-                          type="text"
-                          value={prep}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              setPreparoMassa,
-                              preparoMassa,
-                              idx,
-                              e.target.value
-                            )
-                          }
-                          className="border p-2 flex-1"
-                          required={idx === 0}
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleRemoveField(
-                              setPreparoMassa,
-                              preparoMassa,
-                              idx
-                            )
-                          }
-                        >
-                          -
-                        </button>
-                        {idx === preparoMassa.length - 1 && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleAddField(setPreparoMassa, preparoMassa)
-                            }
-                          >
-                            +
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <label>Modo de Preparo do Recheio:</label>
-                    {preparoRecheio.map((prep, idx) => (
-                      <div key={idx} className="flex gap-2 mb-1">
-                        <input
-                          type="text"
-                          value={prep}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              setPreparoRecheio,
-                              preparoRecheio,
-                              idx,
-                              e.target.value
-                            )
-                          }
-                          className="border p-2 flex-1"
-                          required={idx === 0}
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleRemoveField(
-                              setPreparoRecheio,
-                              preparoRecheio,
-                              idx
-                            )
-                          }
-                        >
-                          -
-                        </button>
-                        {idx === preparoRecheio.length - 1 && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleAddField(setPreparoRecheio, preparoRecheio)
-                            }
-                          >
-                            +
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <label>Modo de Preparo:</label>
-                  {preparoGeral.map((prep, idx) => (
-                    <div key={idx} className="flex gap-2 mb-1">
-                      <input
-                        type="text"
-                        value={prep}
-                        onChange={(e) =>
-                          handleArrayChange(
-                            setPreparoGeral,
-                            preparoGeral,
-                            idx,
-                            e.target.value
-                          )
-                        }
-                        className="border p-2 flex-1"
-                        required={idx === 0}
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleRemoveField(setPreparoGeral, preparoGeral, idx)
-                        }
-                      >
-                        -
-                      </button>
-                      {idx === preparoGeral.length - 1 && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleAddField(setPreparoGeral, preparoGeral)
-                          }
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded mt-2"
-              >
-                Salvar Receita
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
       <div className="mx-auto p-6 bg-white/80 rounded-lg max-w-5xl w-full ">
-        <h2 className="text-2xl font-bold mb-4">Receitas sem glúten</h2>
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => navigate("/formulario")}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+          >
+            Adicionar Receita
+          </button>
+        </div>
+        <h2 className="text-3xl font-bold mb-4">Receitas sem glúten</h2>
 
-        {/* Menu de categorias */}
         <div className="mb-6 space-x-4">
           {categorias.map((categoria) => (
             <button
