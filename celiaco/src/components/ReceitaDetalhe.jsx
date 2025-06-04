@@ -17,7 +17,7 @@ const ReceitaDetalhe = () => {
       setReceita(encontrada);
     } else {
       // Busca do backend
-      fetch(`http://localhost:5000/api/receitas/${slug}`)
+      fetch(`https://celiaco-backend.onrender.com/api/receitas/${slug}`)
         .then((res) => res.json())
         .then((data) => setReceita(data))
         .catch(() => setReceita({ error: true }));

@@ -28,7 +28,7 @@ const Locais = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/locais")
+    fetch("https://celiaco-backend.onrender.com/api/locais")
       .then((res) => res.json())
       .then((data) => {
         setLocais(data);
@@ -104,7 +104,7 @@ const Locais = () => {
         endereco,
       };
 
-      const res = await fetch("http://localhost:5000/api/locais", {
+      const res = await fetch("https://celiaco-backend.onrender.com/api/locais", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(novoLocal),

@@ -27,7 +27,7 @@ const Receitas = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/receitas")
+    fetch("https://celiaco-backend.onrender.com/api/receitas")
       .then((res) => res.json())
       .then((data) => {
         const agrupadas = {};
