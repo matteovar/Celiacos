@@ -23,6 +23,17 @@ receitas_collection = db["receitas"]
 locais_collection = db["locais"]
 
 
+# Serve os arquivos estáticos do React
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_react(path):
+    root_dir = os.path.join(os.path.dirname(__file__), "../frontend/build")
+    if path != "" and os.path.exists(os.path.join(root_dir, path)):
+        return send_from_directory(root_dir, path)
+    else:
+        return send_from_directory(root_dir, "index.html")
+
+
 @app.route("/api/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
@@ -76,4 +87,4 @@ def listar_locais():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
