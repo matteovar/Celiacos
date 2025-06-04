@@ -1,29 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useReceitas } from "./ReceitasContext";
-import { Link } from "react-router-dom";
+// ...imports
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const categorias = ["Salgados", "Doces", "Sobremesas"];
+const categorias = [
+  "Pratos Únicos",
+  "Sopas",
+  "Carnes",
+  "Massas",
+  "Lanches",
+  "Saladas",
+  "Bolos e Tortas",
+  "Doce e Sobremesas",
+];
 
 const Receitas = () => {
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Salgados");
-  const [receitas, setReceitas] = useState({
-    Salgados: [],
-    Doces: [],
-    Sobremesas: [],
-  });
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Pratos Únicos");
+  const [receitas, setReceitas] = useState({});
   const navigate = useNavigate();
+  const scrollRef = useRef(null);
+
+  const scroll = (offset) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     fetch("http://localhost:5000/api/receitas")
       .then((res) => res.json())
       .then((data) => {
+        const agrupadas = {};
+        categorias.forEach((cat) => (agrupadas[cat] = []));
 
-        // Agrupa receitas por categoria
-        const agrupadas = { Salgados: [], Doces: [], Sobremesas: [] };
         data.forEach((r) => {
-          const cat = r.categoria || "Salgados";
-          agrupadas[cat] = agrupadas[cat] || [];
+          const cat = r.categoria || "Pratos Únicos";
+          if (!agrupadas[cat]) agrupadas[cat] = [];
           agrupadas[cat].unshift({
             titulo: r.nome || r.titulo,
             slug: r.slug,
@@ -31,41 +43,62 @@ const Receitas = () => {
             descricao: r.descricao,
           });
         });
+
         setReceitas(agrupadas);
-      })
-      
+      });
   }, []);
 
   return (
     <div className="p-6 max-w-4xl w-full mx-auto bg-white rounded-lg mt-6">
-      <div className="mx-auto p-6 bg-white/80 rounded-lg max-w-5xl w-full ">
+      <div className="mx-auto p-6 bg-white/80 rounded-lg max-w-5xl w-full">
         <div className="flex justify-end mb-4">
           <button
             onClick={() => navigate("/formulario")}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+            className="px-4 py-2 bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white rounded transition"
           >
             Adicionar Receita
           </button>
         </div>
+
         <h2 className="text-3xl font-bold mb-4">Receitas sem glúten</h2>
 
-        <div className="mb-6 space-x-4">
-          {categorias.map((categoria) => (
-            <button
-              key={categoria}
-              onClick={() => setCategoriaSelecionada(categoria)}
-              className={`px-4 py-1 rounded-full border ${
-                categoria === categoriaSelecionada
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-blue-500 border-blue-500"
-              } hover:bg-blue-600 hover:text-white transition`}
-            >
-              {categoria}
-            </button>
-          ))}
+        {/* BARRA DE CATEGORIAS COM SETAS */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => scroll(-200)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow rounded-full p-1 hover:bg-gray-100"
+          >
+            <ChevronLeft size={20} />
+          </button>
+
+          <div
+            ref={scrollRef}
+            className="overflow-x-auto scrollbar-hide whitespace-nowrap px-8"
+          >
+            {categorias.map((categoria) => (
+              <button
+                key={categoria}
+                onClick={() => setCategoriaSelecionada(categoria)}
+                className={`inline-block px-4 py-1 mx-1 my-1 rounded-full border whitespace-nowrap transition ${
+                  categoria === categoriaSelecionada
+                    ? "bg-gradient-to-r from-[#4a2f14] via-[#5f2a12] to-[#8b0000] text-white"
+                    : "bg-white text-blue-500 border-blue-500"
+                } hover:bg-red-900 hover:text-white`}
+              >
+                {categoria}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => scroll(200)}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow rounded-full p-1 hover:bg-gray-100"
+          >
+            <ChevronRight size={20} />
+          </button>
         </div>
 
-        {/* Cards das receitas */}
+        {/* LISTA DE RECEITAS */}
         <div className="grid grid-cols-1 gap-4">
           {(receitas[categoriaSelecionada] || []).map(
             ({ titulo, slug, image, descricao }) => (

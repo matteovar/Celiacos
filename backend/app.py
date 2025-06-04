@@ -20,6 +20,7 @@ MONGODB_URI = os.getenv("MONGODB_URI")
 client = MongoClient(MONGODB_URI)
 db = client["celiaco"]
 receitas_collection = db["receitas"]
+locais_collection = db["locais"]
 
 
 @app.route("/api/upload", methods=["POST"])
@@ -59,6 +60,19 @@ def detalhe_receita(slug):
     if receita:
         return jsonify(receita)
     return jsonify({"error": "Receita não encontrada"}), 404
+
+
+@app.route("/api/locais", methods=["POST"])
+def adicionar_local():
+    data = request.json
+    locais_collection.insert_one(data)
+    return jsonify({"message": "Local adicionado!"}), 201
+
+
+@app.route("/api/locais", methods=["GET"])
+def listar_locais():
+    locais = list(locais_collection.find({}, {"_id": 0}))
+    return jsonify(locais)
 
 
 if __name__ == "__main__":

@@ -47,7 +47,13 @@ const ReceitaDetalhe = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.entries(receita.ingredientes).map(([tipo, lista]) => (
           <div key={tipo}>
-            <h4 className="font-semibold capitalize mb-1">{tipo}</h4>
+            <h4 className="font-semibold capitalize mb-1">
+              {tipo === "massa"
+                ? "Ingredientes da Massa"
+                : tipo === "recheio"
+                ? "Ingredientes do Recheio"
+                : tipo}
+            </h4>
             <ul className="list-disc pl-6 mb-4">
               {lista.map((item, idx) => (
                 <li key={idx} className="break-words">
@@ -97,7 +103,13 @@ const ReceitaDetalhe = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.entries(receita.preparo).map(([tipo, lista]) => (
           <div key={tipo}>
-            <h4 className="font-semibold capitalize mb-1">{tipo}</h4>
+            <h4 className="font-semibold capitalize mb-1">
+              {tipo === "massa"
+                ? "Preparo da Massa"
+                : tipo === "recheio"
+                ? "Preparo do Recheio"
+                : tipo}
+            </h4>
             <ol className="list-decimal list-inside space-y-3 text-gray-700">
               {lista.map((passo, idx) => (
                 <li

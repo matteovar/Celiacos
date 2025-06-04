@@ -242,9 +242,14 @@ const Formulario = () => {
             <option value="" disabled>
               Selecione a categoria
             </option>
-            <option value="Salgados">Salgado</option>
-            <option value="Doces">Doce</option>
-            <option value="Sobremesas">Sobremesa</option>
+            <option value="Pratos Únicos">Pratos Únicos</option>
+            <option value="Sopas">Sopas</option>
+            <option value="Carnes">Carnes</option>
+            <option value="Massas">Massas</option>
+            <option value="Lanches">Lanches</option>
+            <option value="Saladas">Saladas</option>
+            <option value="Bolos e Tortas">Bolos e Tortas</option>
+            <option value="Doce e Sobremesas">Doce e Sobremesas</option>
           </select>
         </div>
 
