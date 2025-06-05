@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useAuth } from "./AuthContext";
 
 const Locais = () => {
   const [locais, setLocais] = useState([]);
@@ -10,6 +11,7 @@ const Locais = () => {
   const [selectedLocal, setSelectedLocal] = useState(null);
   const [filtroBusca, setFiltroBusca] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false); // controla visibilidade do formulário
+  const { user } = useAuth();
 
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -28,7 +30,7 @@ const Locais = () => {
   }, []);
 
   useEffect(() => {
-    fetch("https://celiaco-backend.onrender.com/api/locais")
+    fetch("http://localhost:5000/api/locais")
       .then((res) => res.json())
       .then((data) => {
         setLocais(data);
@@ -104,7 +106,7 @@ const Locais = () => {
         endereco,
       };
 
-      const res = await fetch("https://celiaco-backend.onrender.com/api/locais", {
+      const res = await fetch("http://localhost:5000/api/locais", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(novoLocal),
@@ -145,30 +147,31 @@ const Locais = () => {
             className="w-full p-2 border rounded"
           />
         </div>
-
-        <div className="flex items-center justify-between mb-2">
-          {!mostrarFormulario && (
-            <button
-              onClick={() => setMostrarFormulario(true)}
-              className=" bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white p-2 rounded"
-            >
-              Adicionar Local
-            </button>
-          )}
-
-          {mostrarFormulario && (
-            <>
-              <h3 className="text-lg font-medium">Adicionar Novo Local</h3>
+        {user && (     
+          <div className="flex items-center justify-between mb-2">
+            {!mostrarFormulario && (
               <button
-                onClick={() => setMostrarFormulario(false)}
-                className="text-gray-700 bg-gray-200 px-3 py-1 rounded font-bold hover:bg-gray-300"
-                aria-label="Fechar formulário"
+                onClick={() => setMostrarFormulario(true)}
+                className=" bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white p-2 rounded"
               >
-                X
+                Adicionar Local
               </button>
-            </>
-          )}
-        </div>
+            )}
+
+            {mostrarFormulario && (
+              <>
+                <h3 className="text-lg font-medium">Adicionar Novo Local</h3>
+                <button
+                  onClick={() => setMostrarFormulario(false)}
+                  className="text-gray-700 bg-gray-200 px-3 py-1 rounded font-bold hover:bg-gray-300"
+                  aria-label="Fechar formulário"
+                >
+                  X
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
         {mostrarFormulario && (
           <div className="border-t pt-4 mb-10">

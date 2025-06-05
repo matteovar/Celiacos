@@ -15,3 +15,5 @@ export const ReceitasProvider = ({ children }) => {
     </ReceitasContext.Provider>
   );
 };
+
+export default ReceitasProvider; // Adicione no final do arquivo

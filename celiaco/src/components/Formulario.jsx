@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 const uploadToBackend = async (file) => {
   const data = new FormData();
   data.append("file", file);
-  const res = await fetch("https://celiaco-backend.onrender.com/api/upload", {
+  const res = await fetch("http://localhost:5000/api/upload", {
     method: "POST",
     body: data,
   });
   const json = await res.json();
   // Retorna a URL completa
-  return "https://celiaco-backend.onrender.com/" + json.url;
+  return "http://localhost:5000" + json.url;
 };
 
 const Formulario = () => {
@@ -121,9 +121,12 @@ const Formulario = () => {
       };
     }
 
-    await fetch("https://celiaco-backend.onrender.com/api/receitas", {
+    await fetch("http://localhost:5000/api/receitas", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
       body: JSON.stringify(receitaFinal),
     });
 

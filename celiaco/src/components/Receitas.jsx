@@ -2,6 +2,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useAuth } from "./AuthContext";
+
 
 const categorias = [
   "Pratos Únicos",
@@ -15,10 +17,13 @@ const categorias = [
 ];
 
 const Receitas = () => {
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Pratos Únicos");
+  const [categoriaSelecionada, setCategoriaSelecionada] =
+    useState("Pratos Únicos");
   const [receitas, setReceitas] = useState({});
   const navigate = useNavigate();
   const scrollRef = useRef(null);
+  const { user } = useAuth();
+
 
   const scroll = (offset) => {
     if (scrollRef.current) {
@@ -27,7 +32,7 @@ const Receitas = () => {
   };
 
   useEffect(() => {
-    fetch("https://celiaco-backend.onrender.com/api/receitas")
+    fetch("http://localhost:5000/api/receitas")
       .then((res) => res.json())
       .then((data) => {
         const agrupadas = {};
@@ -51,14 +56,16 @@ const Receitas = () => {
   return (
     <div className="p-6 max-w-4xl w-full mx-auto bg-white rounded-lg mt-6">
       <div className="mx-auto p-6 bg-white/80 rounded-lg max-w-5xl w-full">
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={() => navigate("/formulario")}
-            className="px-4 py-2 bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white rounded transition"
-          >
-            Adicionar Receita
-          </button>
-        </div>
+        {user && (
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => navigate("/formulario")}
+              className="px-4 py-2 bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white rounded transition"
+            >
+              Adicionar Receita
+            </button>
+          </div>
+        )}
 
         <h2 className="text-3xl font-bold mb-4">Receitas sem glúten</h2>
 
@@ -101,23 +108,42 @@ const Receitas = () => {
         {/* LISTA DE RECEITAS */}
         <div className="grid grid-cols-1 gap-4">
           {(receitas[categoriaSelecionada] || []).map(
-            ({ titulo, slug, image, descricao }) => (
-              <Link
-                to={`/receitas/${slug}`}
-                key={slug}
-                className="flex border rounded-lg overflow-hidden shadow-md hover:shadow-xl transition cursor-pointer"
-              >
-                <img
-                  src={image}
-                  alt={titulo}
-                  className="w-32 h-32 object-cover"
-                />
-                <div className="p-4 flex flex-col justify-center">
-                  <h3 className="text-lg font-semibold mb-2">{titulo}</h3>
-                  <p className="text-gray-600">{descricao}</p>
-                </div>
-              </Link>
-            )
+            ({ titulo, slug, image, descricao }) => {
+              const maxLength = 100;
+              const descricaoCurta =
+                descricao.length > maxLength
+                  ? descricao.slice(0, maxLength) + "… "
+                  : descricao;
+
+              return (
+                <Link
+                  to={`/receitas/${slug}`}
+                  key={slug}
+                  className="flex border rounded-lg overflow-hidden shadow-md hover:shadow-xl transition cursor-pointer"
+                >
+                  <img
+                    src={image}
+                    alt={titulo}
+                    className="w-32 h-32 object-cover"
+                  />
+                  <div className="p-4 flex flex-col justify-center">
+                    <h3 className="text-lg font-semibold mb-2">{titulo}</h3>
+                    <p className="text-gray-600">
+                      {descricaoCurta}
+                      {descricao.length > maxLength && (
+                        <Link
+                          to={`/receitas/${slug}`}
+                          className="text-red-700 hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          ver mais
+                        </Link>
+                      )}
+                    </p>
+                  </div>
+                </Link>
+              );
+            }
           )}
         </div>
       </div>

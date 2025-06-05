@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useReceitas } from "./ReceitasContext";
+import { useAuth } from "./AuthContext";
 
 const ReceitaDetalhe = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { receitas } = useReceitas();
+  const { user } = useAuth();
 
   const [receita, setReceita] = useState(null);
 
   useEffect(() => {
-    // Procura nas receitas do contexto
     let encontrada = receitas.find((r) => r.slug === slug);
 
     if (encontrada) {
       setReceita(encontrada);
     } else {
-      // Busca do backend
-      fetch(`https://celiaco-backend.onrender.com/api/receitas/${slug}`)
+      fetch(`http://localhost:5000/api/receitas/${slug}`)
         .then((res) => res.json())
         .then((data) => setReceita(data))
         .catch(() => setReceita({ error: true }));
@@ -27,8 +27,10 @@ const ReceitaDetalhe = () => {
   if (!receita) return <div>Carregando...</div>;
   if (receita.error) return <div>Receita não encontrada!</div>;
 
-  // Corrige utensilios/utensilhos
   const utensilios = receita.utensilios || receita.utensilhos || [];
+
+  const podeEditar =
+    user && (user.id === receita.autor_id || user.role === "admin");
 
   const renderIngredientes = () => {
     if (Array.isArray(receita.ingredientes)) {
@@ -42,7 +44,6 @@ const ReceitaDetalhe = () => {
         </ul>
       );
     }
-    // Massa e recheio
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.entries(receita.ingredientes).map(([tipo, lista]) => (
@@ -67,7 +68,6 @@ const ReceitaDetalhe = () => {
     );
   };
 
-  // Preparo pode ser array ou objeto (massa/recheio)
   const renderUtensilios = () => {
     if (!receita.utensilios || receita.utensilios.length === 0) return null;
     return (
@@ -82,7 +82,6 @@ const ReceitaDetalhe = () => {
     );
   };
 
-  // Preparo pode ser array ou objeto (massa/recheio)
   const renderPreparo = () => {
     if (Array.isArray(receita.preparo)) {
       return (
@@ -98,7 +97,7 @@ const ReceitaDetalhe = () => {
         </ol>
       );
     }
-    // Massa e recheio
+
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.entries(receita.preparo).map(([tipo, lista]) => (
@@ -127,13 +126,25 @@ const ReceitaDetalhe = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl w-full mx-auto bg-white rounded-lg mt-6 ">
+    <div className="p-6 max-w-4xl w-full mx-auto bg-white rounded-lg mt-6">
       <button
         onClick={() => navigate("/receitas")}
         className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
       >
         ← Voltar para receitas
       </button>
+
+      {podeEditar && (
+        <div className="mb-4 text-right">
+          <button
+            onClick={() => navigate(`/editar/${receita.slug}`)}
+            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+          >
+            Editar Receita
+          </button>
+        </div>
+      )}
+
       <h2 className="text-3xl font-bold mb-4">
         {receita.nome || receita.titulo}
       </h2>
