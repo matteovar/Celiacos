@@ -1,7 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import "leaflet/dist/leaflet.css";  
 import { useAuth } from "./AuthContext";
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 const Locais = () => {
   const [locais, setLocais] = useState([]);
@@ -10,16 +21,18 @@ const Locais = () => {
   const [descricao, setDescricao] = useState("");
   const [selectedLocal, setSelectedLocal] = useState(null);
   const [filtroBusca, setFiltroBusca] = useState("");
-  const [mostrarFormulario, setMostrarFormulario] = useState(false); // controla visibilidade do formulário
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const { user } = useAuth();
 
   const mapRef = useRef(null);
   const markersRef = useRef([]);
 
+  // Inicializa o mapa apenas uma vez
   useEffect(() => {
     if (mapRef.current) return;
+
     const map = L.map("map").setView([-23.55052, -46.633308], 12);
-    mapRef.current = map;
+
     L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
       {
@@ -27,23 +40,29 @@ const Locais = () => {
           '&copy; <a href="https://carto.com/attributions">CARTO</a>',
       }
     ).addTo(map);
+
+    mapRef.current = map;
   }, []);
 
+  // Carrega os locais do backend
   useEffect(() => {
     fetch("http://localhost:5000/api/locais")
       .then((res) => res.json())
       .then((data) => {
         setLocais(data);
-        atualizarMarcadores(data, "");
+        atualizarMarcadores(data, filtroBusca);
       })
       .catch((err) => {
         console.error("Erro ao buscar locais:", err);
         alert("Erro ao buscar locais do servidor");
       });
-  }, []);
+  }, [filtroBusca]);
 
+  // Atualiza os marcadores no mapa de acordo com filtro
   const atualizarMarcadores = (locaisAtuais, termoBusca) => {
     if (!mapRef.current) return;
+
+    // Remove marcadores antigos
     markersRef.current.forEach((m) => mapRef.current.removeLayer(m));
     markersRef.current = [];
 
@@ -61,15 +80,17 @@ const Locais = () => {
     });
   };
 
+  // Adiciona um local novo
   const handleAddLocal = async () => {
-    if (!nome || !endereco) {
+    if (!nome.trim() || !endereco.trim()) {
       alert("Preencha o nome e o endereço!");
       return;
     }
+    const enderecoLower = endereco.toLowerCase();
     if (
-      !endereco.toLowerCase().includes("guarulhos") &&
-      !endereco.toLowerCase().includes("são paulo") &&
-      !endereco.toLowerCase().includes("sp")
+      !enderecoLower.includes("guarulhos") &&
+      !enderecoLower.includes("são paulo") &&
+      !enderecoLower.includes("sp")
     ) {
       alert(
         "Endereço muito genérico. Inclua cidade e estado. Ex: 'Av. Esperança, 600, Guarulhos, SP, Brasil'"
@@ -90,6 +111,7 @@ const Locais = () => {
       );
 
       const data = await response.json();
+
       if (!data || data.length === 0) {
         alert(
           "Endereço não encontrado! Tente incluir cidade, número e estado."
@@ -98,6 +120,7 @@ const Locais = () => {
       }
 
       const { lat, lon } = data[0];
+
       const novoLocal = {
         nome,
         lat: parseFloat(lat),
@@ -119,10 +142,11 @@ const Locais = () => {
         setNome("");
         setEndereco("");
         setDescricao("");
-        setMostrarFormulario(false); // fecha o formulário ao adicionar com sucesso
+        setMostrarFormulario(false);
         alert("Local adicionado com sucesso!");
       } else {
-        console.error("Erro ao salvar no backend:", await res.text());
+        const erroTexto = await res.text();
+        console.error("Erro ao salvar no backend:", erroTexto);
         alert("Erro ao salvar no servidor");
       }
     } catch (error) {
@@ -133,7 +157,7 @@ const Locais = () => {
 
   return (
     <div className="flex h-screen">
-      <div className="w-1/4 bg-gray-100 p-4 overflow-auto ">
+      <div className="w-1/4 bg-gray-100 p-4 overflow-auto">
         <div className="mb-4">
           <input
             type="text"
@@ -147,12 +171,13 @@ const Locais = () => {
             className="w-full p-2 border rounded"
           />
         </div>
-        {user && (     
+
+        {user && (
           <div className="flex items-center justify-between mb-2">
             {!mostrarFormulario && (
               <button
                 onClick={() => setMostrarFormulario(true)}
-                className=" bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white p-2 rounded"
+                className="bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white p-2 rounded"
               >
                 Adicionar Local
               </button>
@@ -198,13 +223,12 @@ const Locais = () => {
             />
             <button
               onClick={handleAddLocal}
-              className="w-full  bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white p-2 rounded"
+              className="w-full bg-gradient-to-r from-[#8B0000] via-[#C0392B] to-[#E74C3C] text-white p-2 rounded"
             >
               Enviar Local
             </button>
           </div>
         )}
-
 
         {selectedLocal && (
           <>
@@ -230,7 +254,7 @@ const Locais = () => {
         )}
       </div>
 
-      <div id="map" className="flex-1" style={{ height: "100%" }}></div>
+      <div id="map" className="flex-1" style={{ height: "100vh" }}></div>
     </div>
   );
 };
