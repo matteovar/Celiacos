@@ -32,7 +32,7 @@ const Receitas = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/receitas")
+    fetch("http://124.81.96.70:9090/api/receitas")
       .then((res) => res.json())
       .then((data) => {
         const agrupadas = {};

@@ -10,7 +10,7 @@ const EditarReceita = () => {
   const [imagemPreview, setImagemPreview] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/receitas/${slug}`)
+    fetch(`http://124.81.96.70:9090/api/receitas/${slug}`)
       .then((res) => res.json())
       .then((data) => {
         setReceita(data);
@@ -35,7 +35,7 @@ const EditarReceita = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("http://localhost:5000/api/receitas/upload", {
+    const res = await fetch("http://124.81.96.70:9090/api/receitas/upload", {
       method: "POST",
       body: formData,
     });
@@ -51,7 +51,7 @@ const EditarReceita = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`http://localhost:5000/api/receitas/${slug}`, {
+    const res = await fetch(`http://124.81.96.70:9090/api/receitas/${slug}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
