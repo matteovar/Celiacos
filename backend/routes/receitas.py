@@ -10,7 +10,6 @@ receitas_bp = Blueprint("receitas", __name__)
 
 # POST - adicionar nova receita (protegido)
 @receitas_bp.route("", methods=["POST"])
-@jwt_required()
 def adicionar_receita():
     user_id = get_jwt_identity()
     user = user_collection.find_one({"_id": ObjectId(user_id)})
@@ -46,7 +45,6 @@ def detalhe_receita(slug):
 
 # PUT - editar receita (somente autor ou admin)
 @receitas_bp.route("/<slug>", methods=["PUT"])
-@jwt_required()
 def editar_receita(slug):
     user_id = get_jwt_identity()
     receita = receitas_collection.find_one({"slug": slug})

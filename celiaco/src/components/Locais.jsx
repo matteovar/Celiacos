@@ -45,7 +45,7 @@ const Locais = () => {
 
   // Carrega os locais do backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/locais")
+    fetch("http://127.0.0.1:5000/api/locais")
       .then((res) => res.json())
       .then((data) => {
         setLocais(data);
@@ -128,7 +128,7 @@ const Locais = () => {
         endereco,
       };
 
-      const res = await fetch("http://localhost:5000/api/locais", {
+      const res = await fetch("http://127.0.0.1:5000/api/locais", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(novoLocal),

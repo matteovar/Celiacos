@@ -17,7 +17,7 @@ const ReceitaDetalhe = () => {
     if (encontrada) {
       setReceita(encontrada);
     } else {
-      fetch(`http://localhost:5000/api/receitas/${slug}`)
+      fetch(`http://127.0.0.1:5000/api/receitas/${slug}`)
         .then((res) => res.json())
         .then((data) => setReceita(data))
         .catch(() => setReceita({ error: true }));

@@ -10,7 +10,7 @@ from routes.receitas import receitas_bp
 from routes.user import user_bp
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+CORS(app)
 
 load_dotenv()
 
