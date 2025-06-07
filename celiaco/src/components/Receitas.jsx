@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "./AuthContext";
 
-
 const categorias = [
   "Pratos Únicos",
   "Sopas",
@@ -24,7 +23,6 @@ const Receitas = () => {
   const scrollRef = useRef(null);
   const { user } = useAuth();
 
-
   const scroll = (offset) => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
@@ -32,7 +30,7 @@ const Receitas = () => {
   };
 
   useEffect(() => {
-    fetch("http://124.81.96.70:9090/api/receitas")
+    fetch("http://localhost:5000/api/receitas")
       .then((res) => res.json())
       .then((data) => {
         const agrupadas = {};

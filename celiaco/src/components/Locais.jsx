@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";  
+import "leaflet/dist/leaflet.css";
 import { useAuth } from "./AuthContext";
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -46,7 +45,7 @@ const Locais = () => {
 
   // Carrega os locais do backend
   useEffect(() => {
-    fetch("http://124.81.96.70:9090/api/locais")
+    fetch("http://localhost:5000/api/locais")
       .then((res) => res.json())
       .then((data) => {
         setLocais(data);
@@ -129,7 +128,7 @@ const Locais = () => {
         endereco,
       };
 
-      const res = await fetch("http://124.81.96.70:9090/api/locais", {
+      const res = await fetch("http://localhost:5000/api/locais", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(novoLocal),

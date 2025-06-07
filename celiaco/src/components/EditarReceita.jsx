@@ -10,7 +10,7 @@ const EditarReceita = () => {
   const [imagemPreview, setImagemPreview] = useState("");
 
   useEffect(() => {
-    fetch(`http://124.81.96.70:9090/api/receitas/${slug}`)
+    fetch(`http://localhost:5000/api/receitas/${slug}`)
       .then((res) => res.json())
       .then((data) => {
         setReceita(data);
@@ -25,7 +25,10 @@ const EditarReceita = () => {
   };
 
   const handleListChange = (e, campo) => {
-    const lista = e.target.value.split("\n").map((item) => item.trim()).filter(Boolean);
+    const lista = e.target.value
+      .split("\n")
+      .map((item) => item.trim())
+      .filter(Boolean);
     setReceita((prev) => ({ ...prev, [campo]: lista }));
   };
 
@@ -35,7 +38,7 @@ const EditarReceita = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("http://124.81.96.70:9090/api/receitas/upload", {
+    const res = await fetch("http://localhost:5000/api/receitas/upload", {
       method: "POST",
       body: formData,
     });
@@ -51,7 +54,7 @@ const EditarReceita = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`http://124.81.96.70:9090/api/receitas/${slug}`, {
+    const res = await fetch(`http://localhost:5000/api/receitas/${slug}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -69,10 +72,14 @@ const EditarReceita = () => {
     }
   };
 
-  if (!receita) return <p className="text-center mt-10">Carregando receita...</p>;
+  if (!receita)
+    return <p className="text-center mt-10">Carregando receita...</p>;
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md space-y-6"
+    >
       <h2 className="text-3xl font-bold text-center">Editar Receita</h2>
 
       <div>
@@ -121,7 +128,9 @@ const EditarReceita = () => {
       </div>
 
       <div>
-        <label className="block font-medium">Preparo (1 passo por linha):</label>
+        <label className="block font-medium">
+          Preparo (1 passo por linha):
+        </label>
         <textarea
           name="preparo"
           value={(receita.preparo || []).join("\n")}
@@ -167,9 +176,7 @@ const EditarReceita = () => {
       </button>
 
       {mensagem && (
-        <p className="text-center text-sm font-medium mt-2">
-          {mensagem}
-        </p>
+        <p className="text-center text-sm font-medium mt-2">{mensagem}</p>
       )}
     </form>
   );
