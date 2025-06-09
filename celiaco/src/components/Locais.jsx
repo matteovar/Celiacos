@@ -41,7 +41,7 @@ const Locais = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://124.81.96.70/api/locais")
+    fetch("http://124.81.96.70:9090/api/locais")
       .then((res) => res.json())
       .then((data) => {
         setLocais(data);
@@ -117,7 +117,7 @@ const Locais = () => {
         categoria,
       };
 
-      const res = await fetch("http://124.81.96.70/api/locais", {
+      const res = await fetch("http://124.81.96.70:9090/api/locais", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(novoLocal),

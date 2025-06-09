@@ -10,7 +10,7 @@ const Conta_usuario = () => {
     useEffect(() => {
         if (!user) return;
 
-        fetch("http://124.81.96.70:5000/api/receitas")
+        fetch("http://124.81.96.70:9090:5000/api/receitas")
             .then((res) => res.json())
             .then((data) => {
                 const minhas = data.filter((r) => r.autor_id === user.id);
