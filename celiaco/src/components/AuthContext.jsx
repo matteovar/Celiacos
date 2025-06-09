@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      fetch("http://127.0.0.1:5000/api/usuarios/me", {
+      fetch("http://124.81.96.70/api/usuarios/me", {
         headers: {
           Authorization: "Bearer " + token,
         },

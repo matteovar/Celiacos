@@ -19,7 +19,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/usuarios/reset-password", {
+      const response = await fetch("http://124.81.96.70/api/usuarios/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, senhaAtual, novaSenha }),

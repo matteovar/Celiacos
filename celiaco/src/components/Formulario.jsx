@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 const uploadToBackend = async (file) => {
   const data = new FormData();
   data.append("file", file);
-  const res = await fetch("http://127.0.0.1:5000/api/upload", {
+  const res = await fetch("http://124.81.96.70/api/upload", {
     method: "POST",
     body: data,
   });
   const json = await res.json();
   // Retorna a URL completa
-  return "http://127.0.0.1:5000" + json.url;
+  return "http://124.81.96.70" + json.url;
 };
 
 const Formulario = () => {
@@ -121,7 +121,7 @@ const Formulario = () => {
       };
     }
 
-    await fetch("http://127.0.0.1:5000/api/receitas", {
+    await fetch("http://124.81.96.70/api/receitas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

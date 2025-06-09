@@ -17,7 +17,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/usuarios/login", {
+      const response = await fetch("http://124.81.96.70/api/usuarios/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, senha }),
@@ -30,7 +30,7 @@ function Login() {
         localStorage.setItem("token", data.token);
 
         // Buscar os dados do usuário após login
-        const userRes = await fetch("http://127.0.0.1:5000/api/usuarios/me", {
+        const userRes = await fetch("http://124.81.96.70/api/usuarios/me", {
           headers: {
             Authorization: "Bearer " + data.token,
           },

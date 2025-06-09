@@ -11,7 +11,7 @@ const EditarConta = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/usuarios/atualizar", {
+    const res = await fetch("http://124.81.96.70:5000/api/usuarios/atualizar", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
