@@ -50,7 +50,13 @@ const Header = () => {
               </>
             ) : (
               <>
-                <li className="text-base text-white">Olá, {user.nome}</li>
+                <li>
+                  <Link
+                  to="/conta_usuario"
+                  className="text-base text-white">
+                    Olá, {user.nome}
+                  </Link>
+                </li>
                 <li>
                   <button
                     onClick={logout}

@@ -60,3 +60,37 @@ def me():
             "role": user.get("role", "user"),
         }
     )
+
+@user_bp.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email = data.get('email')
+    senha_atual = data.get('senhaAtual')
+    nova_senha = data.get('novaSenha')
+
+    if not email or not senha_atual or not nova_senha:
+        return jsonify({"msg": "Email, senha atual e nova senha são obrigatórios"}), 400
+
+    user = user_collection.find_one({"email": email})
+    if not user:
+        return jsonify({"msg": "Usuário não encontrado"}), 404
+
+    # Verifica se senha atual bate
+    if not bcrypt.check_password_hash(user['senha'], senha_atual):
+        return jsonify({"msg": "Senha atual incorreta"}), 401
+
+    # Gera hash da nova senha
+    hashed = bcrypt.generate_password_hash(nova_senha).decode('utf-8')
+
+    # Atualiza a senha
+    result = user_collection.update_one(
+        {"email": email},
+        {"$set": {"senha": hashed}}
+    )
+
+    if result.modified_count == 1:
+        return jsonify({"msg": "Senha alterada com sucesso!"}), 200
+    else:
+        return jsonify({"msg": "Nenhuma alteração feita"}), 400
+
+

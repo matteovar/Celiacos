@@ -11,6 +11,9 @@ import { ReceitasProvider } from "./components/ReceitasContext";
 import { AuthProvider } from "./components/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import EditarReceita from "./components/EditarReceita";
+import Conta_usuario from "./components/Conta_usuario";
+import EditarConta from "./components/EditarConta";
+import ResetPassword from "./components/ResetPassword";
 
 
 function App() {
@@ -28,6 +31,7 @@ function App() {
 
             {/* Autenticação */}
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/register" element={<Register />} />
 
             <Route
@@ -45,6 +49,23 @@ function App() {
               element={
                 <PrivateRoute>
                   <Formulario />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/conta_usuario"
+              element={
+                <PrivateRoute>
+                  <Conta_usuario />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/editar-conta"
+              element={
+                <PrivateRoute>
+                  <EditarConta />
                 </PrivateRoute>
               }
             />

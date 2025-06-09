@@ -88,7 +88,11 @@ function Login() {
             required
           />
           <a
-            href="https://www.hashtagtreinamentos.com/"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/reset-password");
+            }}
             className="text-indigo-600 hover:underline mt-2 text-sm self-end"
           >
             Esqueci minha senha
@@ -104,9 +108,8 @@ function Login() {
 
         {mensagem && (
           <p
-            className={`text-center font-medium ${
-              mensagem.includes("sucesso") ? "text-green-600" : "text-red-600"
-            }`}
+            className={`text-center font-medium ${mensagem.includes("sucesso") ? "text-green-600" : "text-red-600"
+              }`}
           >
             {mensagem}
           </p>
