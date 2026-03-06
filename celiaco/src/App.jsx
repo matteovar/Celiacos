@@ -14,6 +14,7 @@ import EditarReceita from "./components/EditarReceita";
 import Conta_usuario from "./components/Conta_usuario";
 import EditarConta from "./components/EditarConta";
 import ResetPassword from "./components/ResetPassword";
+import SobreNos from "./components/Sobrenos";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="/receitas" element={<Receitas />} />
             <Route path="/receitas/:slug" element={<ReceitaDetalhe />} />
             <Route path="/locais" element={<Locais />} />
+            <Route path="/sobre_nos" element={<SobreNos />} />
 
             {/* Autenticação */}
             <Route path="/login" element={<Login />} />

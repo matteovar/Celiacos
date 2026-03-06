@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 from routes.locais import locais_bp
 from routes.receitas import receitas_bp
 from routes.user import user_bp
+import models  # Importa models para inicializar conexão MongoDB
 
 app = Flask(__name__)
 CORS(app)
@@ -33,6 +34,12 @@ app.register_blueprint(user_bp, url_prefix="/api/usuarios")
 # Configuração do JWT
 
 
+# Rota inicial
+@app.route("/")
+def home():
+    return {"message": "API Celicando está rodando!", "status": "ok"}
+
+
 # Rota para servir arquivos enviados
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
@@ -40,4 +47,4 @@ def uploaded_file(filename):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

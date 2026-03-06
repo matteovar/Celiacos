@@ -29,6 +29,15 @@ const Header = () => {
               </Link>
             </li>
 
+            <li>
+              <Link
+                to="/sobre_nos"
+                className="text-base text-white hover:text-gray-200"
+              >
+                Sobre Nos
+              </Link>
+            </li>
+
             {!user ? (
               <>
                 <li>

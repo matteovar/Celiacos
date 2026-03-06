@@ -1,4 +1,3 @@
-// ...imports
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -52,7 +51,7 @@ const Receitas = () => {
   }, []);
 
   return (
-    <div className="p-6 max-w-4xl w-full mx-auto bg-white rounded-lg mt-6">
+    <div className="mt-7 bg-cover min-h-screen">
       <div className="mx-auto p-6 bg-white/80 rounded-lg max-w-5xl w-full">
         {user && (
           <div className="flex justify-end mb-4">
